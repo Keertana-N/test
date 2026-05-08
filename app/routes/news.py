@@ -2,7 +2,7 @@ from fastapi import APIRouter
 import requests
 import os
 from dotenv import load_dotenv
-
+from app.services.sentiment_service import analyze_sentiment
 load_dotenv()
 router = APIRouter()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
@@ -24,12 +24,15 @@ def get_financial_news():
     cleaned_articles = []
 
     for article in articles[:5]:
-        cleaned_articles.append({
-            "title": article.get("title"),
-            "source": article.get("source", {}).get("name"),
-            "url": article.get("url")
-        })
+        title  = article.get("title")
+        sentiment = analyze_sentiment(title)
 
+    cleaned_articles.append({
+        "title": title,
+        "source": article.get("source", {}).get("name"),
+        "url": article.get("url"),
+        "sentiment": sentiment
+    })
     return {
         "status": "success",
         "articles": cleaned_articles
