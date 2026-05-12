@@ -5,8 +5,14 @@ sentiment_pipeline = pipeline("sentiment-analysis")
 def analyze_sentiment(text):
 
     if not text:
-        return "UNKNOWN"
+        return {
+            "label": "UNKNOWN",
+            "score": 0
+        }
 
-    result = sentiment_pipeline(text[:512])
+    result = sentiment_pipeline(text[:512])[0]
 
-    return result[0]["label"]
+    return {
+        "label": result["label"],
+        "score": round(result["score"], 4)
+    }
